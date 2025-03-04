@@ -1,9 +1,33 @@
 from pathlib import Path
 
 
-def process_log_file(file_path):
-    """ Reads a log file from a gadopt simulation and writes out the
-    relevant lines that print out information from rol.
+def strip_rol_output(file_path: Path):
+    """
+    Reads a log file from a gadopt simulation extracting the lines
+    associated with the rol status check. The output is written to a new file
+    with the same name as the input file but with a .strip
+    """
+    if isinstance(file_path, str):
+        file_path = Path(file_path)
+    file_path = file_path.resolve()
+
+    # read the file and extract the relevant lines associated with rol
+    output_lines = read_rol_statuscheck(file_path=file_path)
+
+    # write the output to a new file with .strip suffix
+    strip_finame = file_path.with_stem(file_path.stem + "_stripped")
+
+    # write the output to the new file
+    with strip_finame.open("w") as fo:
+        fo.write(output_lines)
+
+    return strip_finame
+
+
+def read_rol_statuscheck(file_path: Path):
+    """ Reads a log file from a gadopt simulation extracting the lines
+    associated with the rol status check. The output is a string with the
+    relevant lines.
     """
     # if file_path is a string convert it to a Path object
     if isinstance(file_path, str):
@@ -27,11 +51,4 @@ def process_log_file(file_path):
             if len(line.split()) == number_of_outputs:
                 # add it to the output
                 output_lines += line
-
-    # write the output to a new file with .strip suffix
-    strip_finame = finame.with_suffix(".strip")
-    # write the output to the new file
-    with strip_finame.open("w") as fo:
-        fo.write(output_lines)
-
-    return strip_finame
+    return output_lines

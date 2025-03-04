@@ -1,4 +1,4 @@
-from nciutil import process_log_file
+from nciutil import strip_rol_output
 
-stripped_finame = process_log_file("./inversion.log")
+stripped_finame = strip_rol_output("./inversion.log")
 print(stripped_finame)
